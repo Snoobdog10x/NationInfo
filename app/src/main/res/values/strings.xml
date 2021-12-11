@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NationInfo</string>
+    <string name="countryname">Country name:</string>
+    <string name="population">Population: </string>
+    <string name="areaInSqKm">AreaInSqKm: </string>
+    <string name="popunit">People </string>
+    <string name="areaunit">SqKm </string>
+</resources>
