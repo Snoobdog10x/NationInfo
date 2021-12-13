@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             list = new background().execute().get();
             setContentView(R.layout.activity_main);
-            TextView textView = findViewById(R.id.maintext);
             MainListview Adapter = new MainListview(this, list);
             ListView listView = (ListView) findViewById(R.id.list);
             listView.setAdapter(Adapter);

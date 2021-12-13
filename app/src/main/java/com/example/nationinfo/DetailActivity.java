@@ -41,9 +41,9 @@ public class DetailActivity extends AppCompatActivity {
                 population = findViewById(R.id.population);
                 areaInSqKm = findViewById(R.id.areaInSqKm);
                 flagimg.setImageBitmap(flag);
-                countryname.setText(country.getName());
-                population.setText(country.getPopulation()+"");
-                areaInSqKm.setText(country.getAreaInSqKm()+"");
+                countryname.setText(getString(R.string.countryname)+" "+country.getName());
+                population.setText(getString(R.string.population)+" "+country.getPopulation()+" "+getString(R.string.popunit));
+                areaInSqKm.setText(getString(R.string.areaInSqKm)+" "+country.getAreaInSqKm()+" "+getString(R.string.areaunit));
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
