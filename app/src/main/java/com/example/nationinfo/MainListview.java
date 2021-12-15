@@ -30,8 +30,10 @@ public class MainListview extends ArrayAdapter<Country> {
         LayoutInflater inflater=context.getLayoutInflater();
         View rowView=inflater.inflate(R.layout.mainlist, null,true);
         TextView titleText = (TextView) rowView.findViewById(R.id.listtitle);
+        TextView countrycode = (TextView) rowView.findViewById(R.id.countrycode);
         Country c=data.get(position);
-        titleText.setText(c.getName());
+        titleText.setText(context.getString(R.string.countryname)+" "+c.getName());
+        countrycode.setText(context.getString(R.string.countrycode)+" "+c.getCountryCode());
         return rowView;
     }
 }

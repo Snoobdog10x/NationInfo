@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void sendMessage(Country country) {
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-        intent.putExtra("country", country);
+        intent.putExtra("CountryCode", country.getCountryCode());
         startActivity(intent);
     }
     public class background extends AsyncTask<Void, Void, List<Country>> {
