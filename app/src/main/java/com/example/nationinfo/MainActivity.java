@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.text.PrecomputedText;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -37,18 +39,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        List<Country> list= null;
+        List<Country> list = null;
         try {
             list = new background().execute().get();
             setContentView(R.layout.activity_main);
             MainListview Adapter = new MainListview(this, list);
-            ListView listView = (ListView) findViewById(R.id.list);
-            listView.setAdapter(Adapter);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            ListView ls = findViewById(R.id.list);
+            ls.setAdapter(Adapter);
+            ls.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Country country = (Country) parent.getItemAtPosition(position);
@@ -62,11 +64,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
     private void sendMessage(Country country) {
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
         intent.putExtra("CountryCode", country.getCountryCode());
         startActivity(intent);
     }
+
     public class background extends AsyncTask<Void, Void, List<Country>> {
         private static final String URL = "http://api.geonames.org/countryInfoJSON?username=duythanh1565";
 
