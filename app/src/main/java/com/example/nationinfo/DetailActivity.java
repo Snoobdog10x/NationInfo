@@ -28,7 +28,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.detailcountry);
         Intent i = getIntent();
         String URL = "https://corona.lmao.ninja/v2/countries/" + i.getStringExtra("CountryCode");
-        TextView textView=findViewById(R.id.countryname);
+        TextView textView=findViewById(R.id.URL);
         textView.setText(URL);
     }
 

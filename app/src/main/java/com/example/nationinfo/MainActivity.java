@@ -2,72 +2,49 @@ package com.example.nationinfo;
 
 import static android.content.ContentValues.TAG;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.PrecomputedText;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toolbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
+    private List<Country> list;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        List<Country> list = null;
-        try {
-            list = new background().execute().get();
-            setContentView(R.layout.activity_main);
-            MainListview Adapter = new MainListview(this, list);
-            ListView ls = findViewById(R.id.list);
-            ls.setAdapter(Adapter);
-            ls.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Country country = (Country) parent.getItemAtPosition(position);
-                    sendMessage(country);
-                }
-            });
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        new background().execute();
     }
 
-    private void sendMessage(Country country) {
-        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-        intent.putExtra("CountryCode", country.getCountryCode());
+    public void sendMessage(String code) {
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra("CountryCode",code);
         startActivity(intent);
     }
 
@@ -106,7 +83,22 @@ public class MainActivity extends Activity {
         @Override
         protected void onPostExecute(List<Country> countries) {
             super.onPostExecute(countries);
+            setContentView(R.layout.activity_main);
+            list = countries;
+            ListView listView = findViewById(R.id.list);
+            CountryAdapter adapter=new CountryAdapter(MainActivity.this,list);
+            listView.setAdapter(adapter);
+            listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(AbsListView absListView, int i) {
 
+                }
+
+                @Override
+                public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+
+                }
+            });
         }
 
         private String readStream(InputStream in) {
