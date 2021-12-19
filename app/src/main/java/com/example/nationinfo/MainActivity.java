@@ -4,16 +4,27 @@ import static android.content.ContentValues.TAG;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.provider.ContactsContract;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,19 +44,38 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
+
 public class MainActivity extends AppCompatActivity {
-    private List<Country> list;
+    List<Country> countries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new background().execute();
+        setContentView(R.layout.activity_main);
+        background background = new background();
+        background.execute();
+        try {
+            countries = background.get();
+            RecyclerView rvCountries = (RecyclerView) findViewById(R.id.rvCountry);
+            CountryAdapter adapter = new CountryAdapter(countries, MainActivity.this);
+            rvCountries.setAdapter(adapter);
+            rvCountries.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+            RecyclerView.ItemDecoration itemDecoration = new
+                    DividerItemDecoration(MainActivity.this, DividerItemDecoration.VERTICAL);
+            rvCountries.addItemDecoration(itemDecoration);
+            rvCountries.setItemAnimator(new SlideInUpAnimator());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void sendMessage(String code) {
-        Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra("CountryCode",code);
-        startActivity(intent);
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     public class background extends AsyncTask<Void, Void, List<Country>> {
@@ -81,24 +111,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
         protected void onPostExecute(List<Country> countries) {
             super.onPostExecute(countries);
-            setContentView(R.layout.activity_main);
-            list = countries;
-            ListView listView = findViewById(R.id.list);
-            CountryAdapter adapter=new CountryAdapter(MainActivity.this,list);
-            listView.setAdapter(adapter);
-            listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(AbsListView absListView, int i) {
-
-                }
-
-                @Override
-                public void onScroll(AbsListView absListView, int i, int i1, int i2) {
-
-                }
-            });
         }
 
         private String readStream(InputStream in) {
