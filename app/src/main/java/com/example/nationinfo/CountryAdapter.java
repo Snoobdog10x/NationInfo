@@ -66,7 +66,8 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHold
         @Override
         public void onClick(View view) {
             int position = getAbsoluteAdapterPosition(); // gets item position
-            if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
+            if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it\\
+                System.out.println("hiih");
                 sendMessage(countries.get(position).getCountryCode());
             }
         }

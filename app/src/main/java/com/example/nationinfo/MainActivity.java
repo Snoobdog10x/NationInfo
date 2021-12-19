@@ -61,9 +61,6 @@ public class MainActivity extends AppCompatActivity {
             CountryAdapter adapter = new CountryAdapter(countries, MainActivity.this);
             rvCountries.setAdapter(adapter);
             rvCountries.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-            RecyclerView.ItemDecoration itemDecoration = new
-                    DividerItemDecoration(MainActivity.this, DividerItemDecoration.VERTICAL);
-            rvCountries.addItemDecoration(itemDecoration);
             rvCountries.setItemAnimator(new SlideInUpAnimator());
         } catch (ExecutionException e) {
             e.printStackTrace();

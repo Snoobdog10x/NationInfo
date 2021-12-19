@@ -46,6 +46,7 @@ public class LoadBitmap extends AsyncTask<Void, Void, Bitmap> {
     protected void onPostExecute(Bitmap bitmap) {
         super.onPostExecute(bitmap);
         holder.imageView.setImageBitmap(bitmap);
+        holder.imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         holder.countryname.setText(context.getString(R.string.countryname) + " " + c.getName());
         holder.countrycode.setText(context.getString(R.string.countrycode) + " " + c.getCountryCode());
         holder.population.setText(context.getString(R.string.population) + " " + c.getPopulation() + context.getString(R.string.popunit));
