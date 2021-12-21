@@ -2,29 +2,20 @@ package com.example.nationinfo;
 
 
 import android.app.Activity;
-
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHolder> {
     private List<Country> countries;
@@ -67,7 +58,6 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHold
         public void onClick(View view) {
             int position = getAbsoluteAdapterPosition(); // gets item position
             if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it\\
-                System.out.println("hiih");
                 sendMessage(countries.get(position).getCountryCode());
             }
         }
@@ -91,8 +81,12 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHold
     // Involves populating data into the item through holder
     @Override
     public void onBindViewHolder(CountryAdapter.ViewHolder holder, int position) {
-       // System.out.println(position);
-        new LoadBitmap(holder, countries.get(position), context).execute();
+        Country c = countries.get(position);
+        holder.countryname.setText(context.getString(R.string.countryname) + " " + c.getName());
+        holder.countrycode.setText(context.getString(R.string.countrycode) + " " + c.getCountryCode());
+        holder.population.setText(context.getString(R.string.population) + " " + c.getPopulation() + context.getString(R.string.popunit));
+        holder.areaInSqKm.setText(context.getString(R.string.areaInSqKm) + " " + c.getAreaInSqKm() + context.getString(R.string.areaunit));
+        Picasso.get().load(c.getFlag()).into(holder.imageView);
     }
 
     @Override

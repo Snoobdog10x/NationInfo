@@ -2,6 +2,8 @@ package com.example.nationinfo;
 
 import static android.content.ContentValues.TAG;
 
+import static java.lang.Thread.sleep;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,9 +23,11 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,8 +51,14 @@ import java.util.concurrent.ExecutionException;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public class MainActivity extends AppCompatActivity {
+    JSONArray data;
     List<Country> countries;
-
+    private ProgressBar loadingPB;
+    private NestedScrollView nestedSV;
+    private RecyclerView rvCountries;
+    private CountryAdapter adapter;
+    private int index = 0;
+    private int count =0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,17 +66,56 @@ public class MainActivity extends AppCompatActivity {
         background background = new background();
         background.execute();
         try {
-            countries = background.get();
-            RecyclerView rvCountries = (RecyclerView) findViewById(R.id.rvCountry);
-            CountryAdapter adapter = new CountryAdapter(countries, MainActivity.this);
+            loadingPB = findViewById(R.id.idPBLoading);
+            nestedSV = findViewById(R.id.idNestedSV);
+            rvCountries = (RecyclerView) findViewById(R.id.rvCountry);
+            countries = new ArrayList<>();
+            data = background.get();
+            adapter = new CountryAdapter(countries, MainActivity.this);
             rvCountries.setAdapter(adapter);
             rvCountries.setLayoutManager(new LinearLayoutManager(MainActivity.this));
             rvCountries.setItemAnimator(new SlideInUpAnimator());
+            getCountry();
+            nestedSV.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+                        loadingPB.setVisibility(View.VISIBLE);
+                        getCountry();
+                        System.out.println(countries);
+                    }
+                }
+            });
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void getCountry() {
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for (; index < data.length(); index++) {
+            if (count==5) {
+                break;
+            }
+            JSONObject country = null;
+            try {
+                country = data.getJSONObject(index);
+                Country c = new Country(country.getString("countryName"), country.getInt("population")
+                        , country.getDouble("areaInSqKm"), country.getString("countryCode"));
+                countries.add(c);
+                adapter.notifyDataSetChanged();
+                count++;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        count=0;
     }
 
     @Override
@@ -75,13 +124,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public class background extends AsyncTask<Void, Void, List<Country>> {
+    public class background extends AsyncTask<Void, Void, JSONArray> {
         private static final String URL = "http://api.geonames.org/countryInfoJSON?username=duythanh1565";
 
         @Override
-        protected List<Country> doInBackground(Void... params) {
+        protected JSONArray doInBackground(Void... params) {
             //String data = null;
-            List<Country> data = null;
+            JSONArray data = null;
             HttpURLConnection httpUrlConnection = null;
 
             try {
@@ -113,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(List<Country> countries) {
+        protected void onPostExecute(JSONArray countries) {
             super.onPostExecute(countries);
         }
 
@@ -140,20 +189,9 @@ public class MainActivity extends AppCompatActivity {
             return data.toString();
         }
 
-        private List<Country> readJSONStream(String in) throws JSONException {
-            List<Country> data = new ArrayList<>();
-
+        private JSONArray readJSONStream(String in) throws JSONException {
             JSONObject jsonObj = new JSONObject(in);
-            JSONArray countries = jsonObj.getJSONArray("geonames");
-            for (int i = 0; i < countries.length(); i++) {
-                JSONObject country = countries.getJSONObject(i);
-                String countryName = country.getString("countryName");
-                int population = country.getInt("population");
-                double areaInSqKm = country.getDouble("areaInSqKm");
-                String countryCode = country.getString("countryCode");
-                Country c = new Country(countryName, population, areaInSqKm, countryCode);
-                data.add(c);
-            }
+            JSONArray data = jsonObj.getJSONArray("geonames");
             return data;
         }
     }
