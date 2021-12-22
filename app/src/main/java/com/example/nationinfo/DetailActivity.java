@@ -25,11 +25,11 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.detailcountry);
-        Intent i = getIntent();
+        setContentView(R.layout.detailcountry_fix);
+        /*Intent i = getIntent();
         String URL = "https://corona.lmao.ninja/v2/countries/" + i.getStringExtra("CountryCode");
         TextView textView=findViewById(R.id.URL);
-        textView.setText(URL);
+        textView.setText(URL);*/
     }
 
     public class MyAsyncTask extends AsyncTask<String, Void, CountryCorona> {
