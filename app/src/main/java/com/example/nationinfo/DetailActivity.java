@@ -42,12 +42,30 @@ public class DetailActivity extends AppCompatActivity {
         String URL = "https://corona.lmao.ninja/v2/countries/" + i.getStringExtra("CountryCode");
         MyAsyncTask asyncTask=new MyAsyncTask();
         asyncTask.execute(URL);
+        //đoạn này được dùng để set từng thông tin vào text view tương ứng
+        //tạo một đối tượng tên textView đối đượng này được xác định bằng findViewById
+        //VD Bảo tạo một textView có id hinhquocgia
+        //và ta muốn set hình quốc kì vào text view này
+        //nên ta sẽ tạo một đối tượng ImageView có tên imageView để set cho textview này
+        //ImageView imageView=findViewById(R.id.hinhquocgia); hinhquocgia ở đây chính là id
+        //của textview
+        //Picasso.get().load(CountryCorona.getFlag()).into(imageView); dùng để load ảnh
         try {
            CountryCorona countryCorona= asyncTask.get();
-           TextView textView=findViewById(R.id.URL);
-           ImageView imageView=findViewById(R.id.hinhquocgia);
-           textView.setText(countryCorona.getName());
-            Picasso.get().load(CountryCorona.getFlag()).into(imageView);
+           //TextView
+           TextView textView_name_of_country=findViewById(R.id.none);//Điền id của textView name vào đây
+           TextView textView_deaths = findViewById(R.id.none);//điền ID của textview ca chết vào đây
+           TextView textView_cases = findViewById(R.id.none);//điền ID ca bệnh vào đây
+           TextView textView_recovered = findViewById(R.id.none);//điền ID số ca hồi phục vào đây
+            //ImageView
+           ImageView imageView_Flag_of_country=findViewById(R.id.none);//điền id của text view flag vào đây
+           //Set vàp TextView
+           textView_name_of_country.setText(countryCorona.getName_of_country());
+           textView_deaths.setText(countryCorona.getNumber_of_death_of_country());
+           textView_cases.setText(countryCorona.getNumber_of_infected_of_country());
+           textView_recovered.setText(countryCorona.getNumber_of_recovered_of_country());
+           //Set vào image View
+           Picasso.get().load(countryCorona.getFlag_of_country()).into(imageView_Flag_of_country);
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -95,13 +113,23 @@ public class DetailActivity extends AppCompatActivity {
             }
             return data.toString();
         }
-
+        //đây là hàm CountryCorona, nó hoạt động như sau:
+        //nó lấy từng data trong file json để gán cho từng chuỗi.
+        //những chuỗi này bao gồm: tên quốc gia, cờ, số ca nhiễm, +2 không nhớ
+        //ví dụ JSONObject jsonObj = new JSONObject(in); tạo một đối tượng json
+        //String countryname=jsonObj.getString("country"); lấy tên quốc gia
+        //return new CountryCorona(,,,,);
+        //trả về một đối tượng quốc gia gồm 5 chuỗi tên quốc gia, nhiễm bệnh, tử vong,
+        //bình phục, quốc kì
         private CountryCorona readJSONStream(String in) throws JSONException {
             JSONObject jsonObj = new JSONObject(in);
-            String countryname=jsonObj.getString("country");
-            JSONObject CountryInfo =jsonObj.getJSONObject("countryInfo");
-            String flag=CountryInfo.getString("flag");
-            return new CountryCorona(,,,,);
+            String Name = jsonObj.getString("country");
+            JSONObject CountryInfo = jsonObj.getJSONObject("countryInfo");
+            String flag = CountryInfo.getString("flag");
+            int number_of_death = jsonObj.getInt("deaths");
+            int number_of_recovered = jsonObj.getInt("recovered");
+            int number_of_infected = jsonObj.getInt("cases");
+            return new CountryCorona(Name,flag,number_of_death,number_of_recovered,number_of_infected);
         }
 
         @Override
