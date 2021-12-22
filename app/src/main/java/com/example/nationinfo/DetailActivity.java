@@ -1,20 +1,17 @@
 package com.example.nationinfo;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Base64;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -51,7 +48,9 @@ public class DetailActivity extends AppCompatActivity {
             }
         }
     }
-    public class MyAsyncTask extends AsyncTask<String, Void, Bitmap> {
+    public class
+
+      MyAsyncTask extends AsyncTask<String, Void, Bitmap> {
         @Override protected Bitmap doInBackground(String... params) {
             Bitmap bitmap=null;
             for (String scr:params) {
