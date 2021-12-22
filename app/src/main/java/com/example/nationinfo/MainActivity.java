@@ -2,57 +2,88 @@ package com.example.nationinfo;
 
 import static android.content.ContentValues.TAG;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static java.lang.Thread.sleep;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.PrecomputedText;
+import android.os.StrictMode;
+import android.provider.ContactsContract;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toolbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
+
 public class MainActivity extends AppCompatActivity {
+    JSONArray data;
+    List<Country> countries;
+    private ProgressBar loadingPB;
+    private NestedScrollView nestedSV;
+    private RecyclerView rvCountries;
+    private CountryAdapter adapter;
+    private int index = 0;
+    private int count =0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        List<Country> list= null;
+        setContentView(R.layout.activity_main);
+        background background = new background();
+        background.execute();
         try {
-            list = new background().execute().get();
-            setContentView(R.layout.activity_main);
-            MainListview Adapter = new MainListview(this, list);
-            ListView listView = (ListView) findViewById(R.id.list);
-            listView.setAdapter(Adapter);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            loadingPB = findViewById(R.id.idPBLoading);
+            nestedSV = findViewById(R.id.idNestedSV);
+            rvCountries = (RecyclerView) findViewById(R.id.rvCountry);
+            countries = new ArrayList<>();
+            data = background.get();
+            adapter = new CountryAdapter(countries, MainActivity.this);
+            rvCountries.setAdapter(adapter);
+            rvCountries.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+            rvCountries.setItemAnimator(new SlideInUpAnimator());
+            getCountry();
+            nestedSV.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Country country = (Country) parent.getItemAtPosition(position);
-                    sendMessage(country);
+                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+                        loadingPB.setVisibility(View.VISIBLE);
+                        getCountry();
+                        System.out.println(countries);
+                    }
                 }
             });
         } catch (ExecutionException e) {
@@ -60,20 +91,46 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void getCountry() {
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for (; index < data.length(); index++) {
+            if (count==5) {
+                break;
+            }
+            JSONObject country = null;
+            try {
+                country = data.getJSONObject(index);
+                Country c = new Country(country.getString("countryName"), country.getInt("population")
+                        , country.getDouble("areaInSqKm"), country.getString("countryCode"));
+                countries.add(c);
+                adapter.notifyDataSetChanged();
+                count++;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        count=0;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
     }
-    private void sendMessage(Country country) {
-        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-        intent.putExtra("country", country);
-        startActivity(intent);
-    }
-    public class background extends AsyncTask<Void, Void, List<Country>> {
+
+    public class background extends AsyncTask<Void, Void, JSONArray> {
         private static final String URL = "http://api.geonames.org/countryInfoJSON?username=duythanh1565";
 
         @Override
-        protected List<Country> doInBackground(Void... params) {
+        protected JSONArray doInBackground(Void... params) {
             //String data = null;
-            List<Country> data = null;
+            JSONArray data = null;
             HttpURLConnection httpUrlConnection = null;
 
             try {
@@ -100,9 +157,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(List<Country> countries) {
-            super.onPostExecute(countries);
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
+        @Override
+        protected void onPostExecute(JSONArray countries) {
+            super.onPostExecute(countries);
         }
 
         private String readStream(InputStream in) {
@@ -128,20 +189,9 @@ public class MainActivity extends AppCompatActivity {
             return data.toString();
         }
 
-        private List<Country> readJSONStream(String in) throws JSONException {
-            List<Country> data = new ArrayList<>();
-
+        private JSONArray readJSONStream(String in) throws JSONException {
             JSONObject jsonObj = new JSONObject(in);
-            JSONArray countries = jsonObj.getJSONArray("geonames");
-            for (int i = 0; i < countries.length(); i++) {
-                JSONObject country = countries.getJSONObject(i);
-                String countryName = country.getString("countryName");
-                int population = country.getInt("population");
-                double areaInSqKm = country.getDouble("areaInSqKm");
-                String countryCode = country.getString("countryCode");
-                Country c = new Country(countryName, population, areaInSqKm, countryCode);
-                data.add(c);
-            }
+            JSONArray data = jsonObj.getJSONArray("geonames");
             return data;
         }
     }
