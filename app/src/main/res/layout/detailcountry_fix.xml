@@ -26,13 +26,13 @@
             android:textSize="25dp" />
 
         <ImageView
-            android:id="@+id/flagimg"
+            android:id="@+id/coronanaimg"
             android:layout_width="match_parent"
             android:layout_height="203dp"
             android:textSize="25sp"></ImageView>
 
         <TextView
-            android:id="@+id/countryname"
+            android:id="@+id/coronaname"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:textSize="20sp"></TextView>

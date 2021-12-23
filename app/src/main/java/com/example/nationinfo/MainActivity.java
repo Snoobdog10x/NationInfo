@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                     if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
                         loadingPB.setVisibility(View.VISIBLE);
                         getCountry();
-                        System.out.println(countries);
+                        //System.out.println(countries);
                     }
                 }
             });
@@ -94,11 +94,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getCountry() {
-        try {
-            sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
         for (; index < data.length(); index++) {
             if (count==5) {
                 break;
