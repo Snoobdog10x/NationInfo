@@ -38,6 +38,24 @@
             android:textSize="20sp"></TextView>
 
         <TextView
+            android:id="@+id/deaths"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textSize="20sp"></TextView>
+
+        <TextView
+            android:id="@+id/cases"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textSize="20sp"></TextView>
+
+        <TextView
+            android:id="@+id/recovered"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textSize="20sp"></TextView>
+
+        <TextView
             android:id="@+id/URL"
             android:layout_width="match_parent"
             android:layout_height="50dp"></TextView>

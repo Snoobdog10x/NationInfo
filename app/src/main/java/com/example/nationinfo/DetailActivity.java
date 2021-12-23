@@ -37,7 +37,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.detailcountry);
+        setContentView(R.layout.detailcountry_fix);
         Intent i = getIntent();
         String URL = "https://corona.lmao.ninja/v2/countries/" + i.getStringExtra("CountryCode");
         MyAsyncTask asyncTask=new MyAsyncTask();
@@ -53,12 +53,12 @@ public class DetailActivity extends AppCompatActivity {
         try {
            CountryCorona countryCorona= asyncTask.get();
            //TextView
-           TextView textView_name_of_country=findViewById(R.id.none);//Điền id của textView name vào đây
-           TextView textView_deaths = findViewById(R.id.none);//điền ID của textview ca chết vào đây
-           TextView textView_cases = findViewById(R.id.none);//điền ID ca bệnh vào đây
-           TextView textView_recovered = findViewById(R.id.none);//điền ID số ca hồi phục vào đây
+           TextView textView_name_of_country=findViewById(R.id.countryname);//Điền id của textView name vào đây
+           TextView textView_deaths = findViewById(R.id.deaths);//điền ID của textview ca chết vào đây
+           TextView textView_cases = findViewById(R.id.cases);//điền ID ca bệnh vào đây
+           TextView textView_recovered = findViewById(R.id.recovered);//điền ID số ca hồi phục vào đây
             //ImageView
-           ImageView imageView_Flag_of_country=findViewById(R.id.none);//điền id của text view flag vào đây
+           ImageView imageView_Flag_of_country=findViewById(R.id.flagimg);//điền id của text view flag vào đây
            //Set vàp TextView
            textView_name_of_country.setText(countryCorona.getName_of_country());
            textView_deaths.setText(countryCorona.getNumber_of_death_of_country());
