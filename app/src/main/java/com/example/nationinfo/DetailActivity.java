@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.squareup.picasso.Picasso;
@@ -32,12 +33,19 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
+import android.view.MenuItem;
+import androidx.annotation.NonNull;
 
 public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detailcountry_fix);
+        // calling the action bar
+        ActionBar actionBar = getSupportActionBar();
+        // showing the back button in action bar
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         Intent i = getIntent();
         String URL = "https://corona.lmao.ninja/v2/countries/" + i.getStringExtra("CountryCode");
         MyAsyncTask asyncTask=new MyAsyncTask();
@@ -71,6 +79,15 @@ public class DetailActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public class MyAsyncTask extends AsyncTask<String, Void, CountryCorona> {
@@ -135,5 +152,7 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(CountryCorona result) {
         }
+
+
     }
 }
