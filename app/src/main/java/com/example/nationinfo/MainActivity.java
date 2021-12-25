@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import jp.wasabeef.recyclerview.animators.FlipInBottomXAnimator;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public class MainActivity extends AppCompatActivity {
@@ -72,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
             adapter = new CountryAdapter(countries, MainActivity.this);
             rvCountries.setAdapter(adapter);
             rvCountries.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-            rvCountries.setItemAnimator(new SlideInUpAnimator());
             getCountry();
             rvCountries.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
