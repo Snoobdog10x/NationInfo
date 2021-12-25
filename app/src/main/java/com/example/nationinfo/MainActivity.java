@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     JSONArray data;
     List<Country> countries;
     private ProgressBar loadingPB;
-    private NestedScrollView nestedSV;
     private RecyclerView rvCountries;
     private CountryAdapter adapter;
     private int index = 0;
@@ -67,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
         background.execute();
         try {
             loadingPB = findViewById(R.id.idPBLoading);
-            nestedSV = findViewById(R.id.idNestedSV);
             rvCountries = (RecyclerView) findViewById(R.id.rvCountry);
             countries = new ArrayList<>();
             data = background.get();
@@ -76,13 +74,13 @@ public class MainActivity extends AppCompatActivity {
             rvCountries.setLayoutManager(new LinearLayoutManager(MainActivity.this));
             rvCountries.setItemAnimator(new SlideInUpAnimator());
             getCountry();
-            nestedSV.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            rvCountries.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
-                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
-                        loadingPB.setVisibility(View.VISIBLE);
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                    if (!recyclerView.canScrollVertically(1)) {
                         getCountry();
-                        //System.out.println(countries);
+
                     }
                 }
             });
